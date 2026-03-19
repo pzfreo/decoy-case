@@ -1,17 +1,10 @@
 """
-INSTRUCTIONS FOR RUNNING:
-1. This script cannot run directly in the web-based Gemini Canvas because it requires 
-   the 'build123d' CAD kernel which runs on local Python.
+Parametric enclosure for a USB-C decoy board.
 
-2. To run this locally, install the required libraries:
-   pip install build123d ocp-vscode
+Install: pip install build123d ocp-vscode
+Run:     python case-short.py
 
-3. Run the script:
-   python decoy_case.py
-
-4. Visualizing:
-   - If using VS Code, install the "OCP CAD Viewer" extension to see the live 3D preview.
-   - Otherwise, the script exports 'decoy_case.stl' and 'decoy_case.glb' for use in slicers.
+Outputs decoy_base.step and decoy_shell.step.
 """
 
 from build123d import *
@@ -273,9 +266,6 @@ if VISUALIZE:
 # ==========================================
 
 print("Exporting files...")
-export_stl(base_part.part, "decoy_base.stl")
-export_stl(shell_part.part, "decoy_shell.stl")
-
-export_gltf(base_part.part, "decoy_base.glb")
-export_gltf(shell_part.part, "decoy_shell.glb")
+export_step(base_part.part, "decoy_base.step")
+export_step(shell_part.part, "decoy_shell.step")
 print("Done.")

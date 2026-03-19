@@ -1,0 +1,32 @@
+name: Build STEP files
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build123d
+        run: pip install build123d
+
+      - name: Generate STEP files
+        run: python case-short.py
+
+      - name: Verify outputs
+        run: |
+          test -f decoy_base.step || { echo "decoy_base.step missing"; exit 1; }
+          test -f decoy_shell.step || { echo "decoy_shell.step missing"; exit 1; }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: step-files
+          path: "*.step"
