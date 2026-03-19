@@ -9,13 +9,12 @@ Outputs decoy_base.step and decoy_shell.step.
 
 from build123d import *
 
-# Try/Except block for VS Code visualization
+# VS Code visualization (optional — silent when unavailable)
 try:
     from ocp_vscode import *
     VISUALIZE = True
-except ImportError:
+except (ImportError, Exception):
     VISUALIZE = False
-    print("ocp_vscode not found, skipping visualization.")
 
 # ==========================================
 # 1. PARAMETERS
