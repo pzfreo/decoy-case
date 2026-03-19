@@ -7,7 +7,7 @@ You can customise how tall the entry is for the wire at the back.
 
 ```bash
 pip install build123d
-python case-short.py
+python decoy_case.py
 ```
 
 This generates `decoy_base.step` and `decoy_shell.step`.
