@@ -1,0 +1,25 @@
+name: Slice
+
+on:
+  workflow_run:
+    workflows: ["Build STEP files"]
+    types: [completed]
+
+jobs:
+  slice:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: step-files
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pzfreo/fabprint/action@main

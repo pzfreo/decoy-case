@@ -13,6 +13,7 @@ version = "2.3.1"
 printer = "Bambu Lab P1S 0.4 nozzle"
 process = "0.20mm Standard @BBL X1C"
 filaments = ["Generic PETG"]
+profiles_dir = "profiles"
 
 [slicer.overrides]
 sparse_infill_density = "30%"
