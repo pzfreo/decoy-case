@@ -22,7 +22,7 @@ except (ImportError, Exception):
 
 # -- Physical Board Dimensions --
 pcb_len = 28.5
-pcb_wid = 11.0
+pcb_wid = 11.1
 pcb_thick = 1.6
 
 # Component sizes
