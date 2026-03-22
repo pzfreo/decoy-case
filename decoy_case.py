@@ -2,7 +2,7 @@
 Parametric enclosure for a USB-C decoy board.
 
 Install: pip install build123d ocp-vscode
-Run:     python case-short.py
+Run:     python decoy_case.py
 
 Outputs decoy_base.step and decoy_shell.step.
 """
