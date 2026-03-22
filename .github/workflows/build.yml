@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -19,10 +21,23 @@ jobs:
         run: pip install build123d
 
       - name: Generate STEP files
+        id: generate
         run: python decoy_case.py
 
       - name: Verify outputs
+        id: verify
         run: |
+          FILES=""
+          for f in *.step; do
+            if [ -f "$f" ]; then
+              SIZE=$(du -h "$f" | cut -f1)
+              FILES="${FILES}| \`${f}\` | ${SIZE} |\n"
+            fi
+          done
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          echo -e "$FILES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
           test -f decoy_base.step || { echo "decoy_base.step missing"; exit 1; }
           test -f decoy_shell.step || { echo "decoy_shell.step missing"; exit 1; }
 
@@ -30,3 +45,49 @@ jobs:
         with:
           name: step-files
           path: "*.step"
+
+      - name: Post PR comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        env:
+          FILES: ${{ steps.verify.outputs.files }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const files = process.env.FILES || '';
+            const runUrl = process.env.RUN_URL;
+            const marker = '<!-- build-step-result -->';
+
+            const body = [
+              marker,
+              '### Build: STEP files',
+              '',
+              '| File | Size |',
+              '|------|------|',
+              files.trim(),
+              '',
+              `> 📦 [Download **step-files**](${runUrl}#artifacts)`,
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
