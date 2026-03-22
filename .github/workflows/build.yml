@@ -46,6 +46,14 @@ jobs:
           name: step-files
           path: "*.step"
 
+      - name: Job summary
+        run: |
+          echo "### Build: STEP files" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| File | Size |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|------|------|" >> "$GITHUB_STEP_SUMMARY"
+          echo -e "${{ steps.verify.outputs.files }}" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Post PR comment
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
