@@ -22,4 +22,4 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: pzfreo/fabprint/action@main
+      - uses: estampo/estampo/action@main
