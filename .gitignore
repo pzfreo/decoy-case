@@ -213,4 +213,4 @@ __marimo__/
 *.bin
 *.3mf
 *.gcode
-fabprint_output/
+estampo_output/

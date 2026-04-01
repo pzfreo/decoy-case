@@ -11,7 +11,7 @@ You can customise how tall the entry is for the wire at the back.
 
 1. `decoy_case.py` generates two STEP files (base + shell) using build123d
 2. CI builds the STEP files on every push/PR
-3. [fabprint](https://github.com/pzfreo/fabprint) slices them with OrcaSlicer in CI, producing print-ready gcode
+3. [estampo](https://github.com/estampo/estampo) slices them with OrcaSlicer in CI, producing print-ready gcode
 4. PRs get a comment with estimated print time and filament usage
 
 ## Usage
@@ -26,6 +26,6 @@ This generates `decoy_base.step` and `decoy_shell.step`.
 To slice locally:
 
 ```bash
-pip install fabprint
-fabprint run
+pip install estampo
+estampo run
 ```
