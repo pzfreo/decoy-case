@@ -1,8 +1,8 @@
 {
     "type": "filament",
-    "name": "Generic PETG",
+    "name": "Generic PLA @base",
     "from": "system",
-    "instantiation": "true",
+    "instantiation": "false",
     "activate_air_filtration": [
         "0"
     ],
@@ -10,40 +10,40 @@
         "0"
     ],
     "close_fan_the_first_x_layers": [
-        "3"
+        "1"
     ],
     "complete_print_exhaust_fan_speed": [
         "70"
     ],
     "cool_plate_temp": [
-        "0"
+        "35"
     ],
     "cool_plate_temp_initial_layer": [
-        "0"
+        "35"
     ],
     "during_print_exhaust_fan_speed": [
         "70"
     ],
     "eng_plate_temp": [
-        "70"
+        "0"
     ],
     "eng_plate_temp_initial_layer": [
-        "70"
+        "0"
     ],
     "fan_cooling_layer_time": [
-        "30"
+        "100"
     ],
     "fan_max_speed": [
-        "90"
+        "100"
     ],
     "fan_min_speed": [
-        "40"
+        "100"
     ],
     "filament_cost": [
-        "30"
+        "20"
     ],
     "filament_density": [
-        "1.27"
+        "1.24"
     ],
     "filament_deretraction_speed": [
         "nil"
@@ -52,7 +52,7 @@
         "1.75"
     ],
     "filament_flow_ratio": [
-        "0.95"
+        "0.98"
     ],
     "filament_is_support": [
         "0"
@@ -94,7 +94,7 @@
         "0"
     ],
     "filament_type": [
-        "PETG"
+        "PLA"
     ],
     "filament_vendor": [
         "Generic"
@@ -121,7 +121,7 @@
         "10%"
     ],
     "filament_scarf_gap": [
-        "0%"
+        "15%"
     ],
     "filament_scarf_length": [
         "10"
@@ -130,22 +130,22 @@
         "100%"
     ],
     "hot_plate_temp": [
-        "70"
+        "55"
     ],
     "hot_plate_temp_initial_layer": [
-        "70"
+        "55"
     ],
     "nozzle_temperature": [
-        "255"
+        "220"
     ],
     "nozzle_temperature_initial_layer": [
-        "255"
+        "220"
     ],
     "overhang_fan_speed": [
-        "90"
+        "100"
     ],
     "overhang_fan_threshold": [
-        "10%"
+        "50%"
     ],
     "reduce_fan_stop_start_freq": [
         "1"
@@ -154,55 +154,45 @@
         "3"
     ],
     "supertack_plate_temp": [
-        "70"
+        "45"
     ],
     "supertack_plate_temp_initial_layer": [
-        "70"
+        "45"
     ],
     "slow_down_for_layer_cooling": [
         "1"
     ],
     "slow_down_layer_time": [
-        "12"
+        "8"
     ],
     "slow_down_min_speed": [
         "20"
     ],
     "temperature_vitrification": [
-        "70"
+        "45"
     ],
     "textured_plate_temp": [
-        "70"
+        "55"
     ],
     "textured_plate_temp_initial_layer": [
-        "70"
+        "55"
     ],
-    "compatible_printers": [
-        "Bambu Lab X1 Carbon 0.4 nozzle",
-        "Bambu Lab X1 0.4 nozzle",
-        "Bambu Lab X1 Carbon 0.6 nozzle",
-        "Bambu Lab X1 Carbon 0.8 nozzle",
-        "Bambu Lab X1 0.6 nozzle",
-        "Bambu Lab X1 0.8 nozzle",
-        "Bambu Lab P1S 0.4 nozzle",
-        "Bambu Lab P1S 0.6 nozzle",
-        "Bambu Lab P1S 0.8 nozzle",
-        "Bambu Lab X1E 0.4 nozzle",
-        "Bambu Lab X1E 0.6 nozzle",
-        "Bambu Lab X1E 0.8 nozzle"
-    ],
+    "compatible_printers": [],
     "filament_start_gcode": [
-        "; filament start gcode\n{if (bed_temperature[current_extruder] >80)||(bed_temperature_initial_layer[current_extruder] >80)}M106 P3 S255\n{elsif (bed_temperature[current_extruder] >60)||(bed_temperature_initial_layer[current_extruder] >60)}M106 P3 S180\n{endif}\n\n{if activate_air_filtration[current_extruder] && support_air_filtration}\nM106 P3 S{during_print_exhaust_fan_speed_num[current_extruder]} \n{endif}"
+        "; filament start gcode\n{if  (bed_temperature[current_extruder] >45)||(bed_temperature_initial_layer[current_extruder] >45)}M106 P3 S255\n{elsif(bed_temperature[current_extruder] >35)||(bed_temperature_initial_layer[current_extruder] >35)}M106 P3 S180\n{endif};Prevent PLA from jamming\n\n\n{if activate_air_filtration[current_extruder] && support_air_filtration}\nM106 P3 S{during_print_exhaust_fan_speed_num[current_extruder]} \n{endif}"
     ],
     "filament_end_gcode": [
         "; filament end gcode \nM106 P3 S0\n"
     ],
-    "nozzle_temperature_range_high": [
-        "270"
+    "additional_cooling_fan_speed": [
+        "70"
     ],
     "nozzle_temperature_range_low": [
-        "220"
+        "190"
     ],
-    "filament_id": "GFG99",
-    "setting_id": "GFSG99"
+    "nozzle_temperature_range_high": [
+        "240"
+    ],
+    "filament_id": "GFL99",
+    "description": "The generic presets are conservatively tuned for compatibility with a wider range of filaments. For higher printing quality and speeds, please use Bambu filaments with Bambu presets."
 }
