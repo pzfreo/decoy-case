@@ -30,7 +30,6 @@ filament = 3
 
 [[parts]]
 file = "decoy_shell.step"
-orient = "upside-down"
 filament = 3
 
 [printer]

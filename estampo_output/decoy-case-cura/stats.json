@@ -1,0 +1,12 @@
+{
+  "print_time": "1h 51m 6s",
+  "print_time_secs": 6666,
+  "filament_cm3": 0.0,
+  "filament_g": 0.0,
+  "layer_count": 88,
+  "filament_types": [],
+  "filament_changes": 0,
+  "filament_usage_g": [
+    0.0
+  ]
+}

@@ -1,25 +1,17 @@
-name = "decoy-case"
+name = "decoy-case-cura"
 
 [pipeline]
-stages = ["load", "arrange", "plate", "slice", "print"]
+stages = ["load", "arrange", "plate", "slice"]
 
 [plate]
 size = [256, 256]
 padding = 5.0
 
 [slicer]
-engine = "orca"
-version = "2.3.1"
-printer = "Bambu Lab P1S 0.4 nozzle"
+engine = "cura"
+version = "5.12.0"
 bed_type = "Textured PEI Plate"
-process = "0.20mm Standard @BBL X1C"
 filaments = ["Generic PLA @base", "Generic ASA @base", "Generic PETG-CF @base", "Generic PLA @base"]
-
-[slicer.machine_overrides]
-nozzle_type = "hardened_steel"
-
-[slicer.filament_overrides]
-required_nozzle_HRC = "0"
 
 [slicer.overrides]
 sparse_infill_density = "30%"
@@ -33,5 +25,4 @@ file = "decoy_shell.step"
 orient = "upside-down"
 filament = 3
 
-[printer]
-name = "workshop"
+
