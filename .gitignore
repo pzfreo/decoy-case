@@ -214,3 +214,8 @@ __marimo__/
 *.3mf
 *.gcode
 fabprint_output/
+estampo_output/
+
+# macOS
+.DS_Store
+**/.DS_Store

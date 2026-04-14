@@ -34,8 +34,9 @@ term_block_h = 10.5
 
 # -- Enclosure Settings --
 wall_thick = 1.6
-floor_thick = 4.0   # Thicker floor to allow for counterbores
-fit_tol = 0.20      # Tolerance for the Lid/Base rim fit
+floor_thick = 5.2   # Thicker floor to allow for counterbores + chamfer
+fit_tol = 0.40      # Tolerance for the Lid/Base rim fit
+corner_r = 2.0      # Outer vertical-corner fillet radius
 standoff_h = 2.5    # Clearance for pins under the board
 recess_h = 3.8      # Height of the PCB retention tray (from floor)
 usb_anvil_h = 2.0   # Height of the "anvil" bar under the USB port (Now on Base)
@@ -59,7 +60,7 @@ screw_post_dia = 6.0
 screw_pilot_dia = 2.5  
 screw_clear_dia = 3.2  
 head_dia = 6.0         
-cb_depth = 2.0         # Depth of the counterbore recess
+cb_depth = 1.8         # Depth of the counterbore recess
 
 # -- Calculated Dimensions --
 # X/Y FIT
@@ -102,6 +103,8 @@ with BuildPart() as base_part:
     # 1. Base Plate (Floor)
     # UPDATED: Uses floor_thick instead of wall_thick
     Box(outer_l, outer_w, floor_thick, align=(Align.CENTER, Align.CENTER, Align.MIN))
+    # Round the four vertical outer corners
+    fillet(base_part.edges().filter_by(Axis.Z), corner_r)
     
     # 2. Alignment Lip
     # UPDATED: Z-Location uses floor_thick
@@ -138,10 +141,15 @@ with BuildPart() as base_part:
             Box(pcb_len + pcb_xy_tol, pcb_wid + pcb_xy_tol, recess_h, align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
         
         with BuildPart(mode=Mode.PRIVATE) as posts_tool:
+            # Generous square clear centered on each post. Big enough to remove the
+            # cylinder bite AND any nearby recess-wall slivers on either side of
+            # the post. Only subtracts from recess_obj, so standoffs/lip are safe.
+            post_clear = 8.0
             for x in [-post_offset_x, post_offset_x]:
                 for y in [-post_offset_y, post_offset_y]:
                     with Locations((x, y)):
-                        Cylinder(radius=post_r + fit_tol, height=recess_h, align=(Align.CENTER, Align.CENTER, Align.MIN))
+                        Box(post_clear, post_clear, recess_h,
+                            align=(Align.CENTER, Align.CENTER, Align.MIN))
         add(recess_obj.part - posts_tool.part)
 
     # 4. PCB Standoffs (Square 1mm)
@@ -164,17 +172,26 @@ with BuildPart() as base_part:
             Box(soff_size, soff_size, standoff_h, align=(Align.CENTER, Align.CENTER, Align.MIN))
 
     # 5. Screw Holes (Corners) - RESTORED COUNTERBORE
+    # Self-supporting 45° chamfer added at top of counterbore so the
+    # head_dia -> clear_dia transition prints cleanly without supports.
+    chamfer_h = (head_dia - screw_clear_dia) / 2  # 45° => height == radial step
     with Locations([(x, y) for x in [-post_offset_x, post_offset_x] for y in [-post_offset_y, post_offset_y]]):
         # Full thickness clearance hole (using floor_thick)
         Cylinder(radius=screw_clear_dia/2, height=floor_thick*3, align=(Align.CENTER, Align.CENTER, Align.CENTER), mode=Mode.SUBTRACT)
         # Counterbore from bottom
         with Locations((0,0,0)):
              Cylinder(radius=head_dia/2, height=cb_depth, align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
+        # 45° self-supporting chamfer above the counterbore
+        with Locations((0, 0, cb_depth)):
+            Cone(bottom_radius=head_dia/2, top_radius=screw_clear_dia/2,
+                 height=chamfer_h, align=(Align.CENTER, Align.CENTER, Align.MIN),
+                 mode=Mode.SUBTRACT)
 
     # 6. Wire Clamp Anvil
     # UPDATED: Z-Location uses floor_thick
+    # Width shrunk by fit_tol to clear the matching notch in the shell back wall.
     with Locations((outer_l/2 - wall_thick/2, 0, floor_thick)):
-        Box(wall_thick, slot_w, clamp_anvil_h, align=(Align.CENTER, Align.CENTER, Align.MIN))
+        Box(wall_thick, slot_w - fit_tol, clamp_anvil_h, align=(Align.CENTER, Align.CENTER, Align.MIN))
 
     # 7. FLUSH USB ANVIL (Front Filler)
     # UPDATED: Z-Location uses floor_thick
@@ -187,6 +204,16 @@ with BuildPart() as base_part:
     with Locations((-outer_l/2, 0, floor_thick + usb_anvil_h)):
             Box(cut_depth, usb_cut_w, lip_height * 3, align=(Align.MIN, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
 
+    # 8b. Trim PCB-recess front-wall corner stubs the USB cut couldn't reach.
+    # The recess outer width (13.55) is wider than usb_cut_w (12), so two small
+    # stubs were left at the front corners of the recess flanking the USB opening.
+    # Anchor to the inner-wall face with Align.MAX so we can't drift off the wall.
+    recess_outer_w = pcb_wid + pcb_xy_tol + 2 * recess_wall_t
+    inner_wall_x = -(pcb_len + pcb_xy_tol) / 2  # inner face of the front recess wall
+    with Locations((inner_wall_x, 0, floor_thick + usb_anvil_h)):
+        Box(recess_wall_t + 0.4, recess_outer_w + 0.4, recess_h,
+            align=(Align.MAX, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
+
 
 # ==========================================
 # 4. GENERATE THE SHELL
@@ -197,6 +224,8 @@ with BuildPart() as shell_part:
     
     # 1. Main Block
     Box(outer_l, outer_w, shell_ext_h, align=(Align.CENTER, Align.CENTER, Align.MIN))
+    # Round the four vertical outer corners
+    fillet(shell_part.edges().filter_by(Axis.Z), corner_r)
     
     # 2. Hollow Cavity
     Box(cavity_l, cavity_w, internal_h, align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
